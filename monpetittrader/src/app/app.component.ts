@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DebugComponent } from './debug/debug.component';
+import { CandlestickChartComponent } from './components/commons/candlestick-chart/candlestick-chart.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, DebugComponent],
+  imports: [RouterOutlet, DebugComponent, CandlestickChartComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
