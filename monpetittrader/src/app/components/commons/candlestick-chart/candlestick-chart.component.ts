@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { PlotlyModule } from 'angular-plotly.js';
 import * as PlotlyJS from 'plotly.js-dist-min';
 import { AlphavantageService } from '../../../services/alphavantage.service';
@@ -14,7 +14,8 @@ PlotlyModule.plotlyjs = PlotlyJS
   templateUrl: './candlestick-chart.component.html',
   styleUrl: './candlestick-chart.component.css'
 })
-export class CandlestickChartComponent implements OnInit {
+export class CandlestickChartComponent implements OnChanges {
+  @Input() selectedOption: string = ''
   rawData: { [key: string]: CandleDataObject } = {};
   candleDataSeries: CandleDataSeries | null = null;
   graph = {
@@ -63,16 +64,18 @@ export class CandlestickChartComponent implements OnInit {
 
   constructor(private alphavantageService: AlphavantageService) { }
 
-  ngOnInit(): void {
-    this.alphavantageService.getDailyTimesSeries('IBM').subscribe(
-      res => {
-        this.rawData = res["Time Series (Daily)"];
-        this.candleDataSeries = this.alphavantageService.transformCandleDataObjectsToSeries(this.rawData);
-        
-        if (this.candleDataSeries){
-          Object.assign(this.graph.data[0], this.candleDataSeries);
+  ngOnChanges(update: SimpleChanges): void {
+    if (update['selectedOption'] && this.selectedOption) {
+      this.alphavantageService.getDailyTimesSeries(this.selectedOption).subscribe(
+        res => {
+          this.rawData = res["Time Series (Daily)"];
+          this.candleDataSeries = this.alphavantageService.transformCandleDataObjectsToSeries(this.rawData);
+
+          if (this.candleDataSeries) {
+            Object.assign(this.graph.data[0], this.candleDataSeries);
+          }
         }
-      }
-    )
+      )
+    }
   }
 }
